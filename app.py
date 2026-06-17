@@ -1,4 +1,3 @@
-%%writefile app.py
 import streamlit as st
 
 # Set page configuration for a wider layout
