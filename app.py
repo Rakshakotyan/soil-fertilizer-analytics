@@ -1,49 +1,98 @@
 import streamlit as st
+import pandas as pd
+import numpy as np
 
-# Set page configuration for a wider layout
-st.set_page_config(layout="wide")
+# ==========================================
+# 1. CORE AI LOGIC
+# ==========================================
+def get_soil_advice(n, p, k):
+    if n < 30:
+        return "High Nitrogen Fertilizer (Urea)"
+    elif p < 20:
+        return "High Phosphorus Fertilizer (DAP)"
+    elif k < 20:
+        return "High Potassium Fertilizer (MOP)"
+    else:
+        return "Soil is Healthy! (Add Organic Compost)"
 
-st.title("🌱 Soil Health & Fertilizer Advisor")
-st.write("Enter your soil nutrient levels to get an instant recommendation.")
+# ==========================================
+# 2. DESIGN & STYLING (The "Good Design" Part)
+# ==========================================
+st.set_page_config(page_title="Soil Health Advisor", page_icon="🌱", layout="wide")
 
-# Create a two-column layout: Left for inputs (sliders), Right for the reference chart
-col1, col2 = st.columns([2, 1], gap="large")
-
-# --- LEFT COLUMN: INPUT SLIDERS ---
-with col1:
-    st.subheader("📊 Your Soil Levels")
+# Inject Custom CSS for professional cards and borders
+st.markdown("""
+    <style>
+    /* Main Background */
+    .stApp {
+        background-color: #fdfdfd;
+    }
     
-    # Sliders default to 20 and 7.00 as shown in your original screenshot
-    nitrogen = st.slider("Nitrogen (N)", min_value=0, max_value=100, value=20)
-    phosphorus = st.slider("Phosphorus (P)", min_value=0, max_value=100, value=20)
-    potassium = st.slider("Potassium (K)", min_value=0, max_value=300, value=20)
-    ph = st.slider("Soil pH", min_value=0.0, max_value=14.0, value=7.00, step=0.1)
-
-# --- RIGHT COLUMN: THE "SHOULD BE" TARGET CHART ---
-with col2:
-    st.subheader("Ideal Target Levels")
-    st.caption("Standard optimal guidelines for general crops")
+    /* Target Level Card Container */
+    .target-container {
+        background-color: #ffffff;
+        padding: 25px;
+        border-radius: 15px;
+        border-left: 6px solid #2e7d32; /* Nature Green Accent */
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        border: 1px solid #f0f0f0;
+    }
     
-    # Visual metric boxes showing what the values actually should be
-    st.metric(label="Ideal Nitrogen (N)", value="40 - 80 ppm")
-    st.metric(label="Ideal Phosphorus (P)", value="20 - 40 ppm")
-    st.metric(label="Ideal Potassium (K)", value="150 - 250 ppm")
-    st.metric(label="Ideal Soil pH", value="6.0 - 7.0 (Neutral)")
+    /* Individual Metric Boxes */
+    div[data-testid="stMetric"] {
+        background-color: #f9fbf9;
+        border: 1px solid #eef2ee;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
+    
+    /* Custom Title Styling */
+    .main-title {
+        color: #1b5e20;
+        font-weight: 800;
+        letter-spacing: -1px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
-# --- DYNAMIC RECOMMENDATION LOGIC ---
+# ==========================================
+# 3. WEBSITE CONTENT
+# ==========================================
+st.markdown('<h1 class="main-title">🌱 Soil Health & Fertilizer Advisor</h1>', unsafe_allow_html=True)
+st.write("Real-time nutrient analysis dashboard for precision agriculture.")
 st.markdown("---")
 
-# Simple logic block based on your screenshot's output
-if nitrogen < 40:
-    recommendation = "High Nitrogen Fertilizer (Urea)"
-elif potassium < 150:
-    recommendation = "High Potassium Fertilizer (Muriate of Potash)"
-elif phosphorus < 20:
-    recommendation = "Phosphorus Rich Fertilizer (DAP)"
-else:
-    recommendation = "Your soil nutrients look well-balanced!"
+# Layout: 2 Columns
+col1, col2 = st.columns([1.8, 1], gap="large")
 
-# Display recommendation container
-st.success(f"### ✅ Recommendation: {recommendation}")
+with col1:
+    st.subheader("📊 Live Soil Inputs")
+    user_n = st.slider("Nitrogen (N)", 0, 100, 20)
+    user_p = st.slider("Phosphorus (P)", 0, 100, 20)
+    user_k = st.slider("Potassium (K)", 0, 300, 20)
+    ph = st.slider("Soil pH", 0.0, 14.0, 7.0, step=0.1)
 
-st.info("This analysis is based on real-time nutrient input.")
+with col2:
+    # --- STYLED TARGET CARD ---
+    st.markdown('<div class="target-container">', unsafe_allow_html=True)
+    st.subheader("🎯 Ideal Target Ranges")
+    st.caption("Baseline requirements for maximum crop yield:")
+    
+    st.metric(label="Nitrogen (N) Target", value="40 - 80 ppm")
+    st.metric(label="Phosphorus (P) Target", value="20 - 40 ppm")
+    st.metric(label="Potassium (K) Target", value="150 - 250 ppm")
+    st.metric(label="Ideal pH", value="6.0 - 7.0")
+    
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# ==========================================
+# 4. OUTPUT RESULTS
+# ==========================================
+st.markdown("---")
+result = get_soil_advice(user_n, user_p, user_k)
+
+# Beautiful Result Display
+st.success(f"### ✅ AI Recommendation: {result}")
+
+st.info("💡 **Dashboard insight:** Adjust the sliders to match your lab report. The recommendation will update automatically based on the detected nutrient gaps.")
