@@ -21,7 +21,7 @@ with col1:
 
 # --- RIGHT COLUMN: THE "SHOULD BE" TARGET CHART ---
 with col2:
-    st.subheader("🎯 Ideal Target Levels")
+    st.subheader("Ideal Target Levels")
     st.caption("Standard optimal guidelines for general crops")
     
     # Visual metric boxes showing what the values actually should be
